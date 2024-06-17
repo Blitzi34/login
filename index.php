@@ -16,8 +16,8 @@ echo '
 
     <body>
         <div>
-            TEST
-        </div>
+            TEST 2
+        </div> 
 
     </body>
 </html>';
