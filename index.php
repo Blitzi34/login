@@ -16,7 +16,7 @@ echo '
 
     <body>
         <div>
-            TEST 2
+            TEST 
         </div> 
 
     </body>
