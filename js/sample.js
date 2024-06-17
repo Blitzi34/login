@@ -1,6 +1,6 @@
 $( document ).ready(function() {
 
-alert('sample');
+// alert('sample');
 
 
 });
