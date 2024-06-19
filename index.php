@@ -46,8 +46,8 @@ $html_output = '
     <div id="template-content" class="m-0 pb-0 p-1">	
         <div id="info_box" class="'.$info_class = (!empty($error)) ? ('') : ('d-none').'">
             <div id="info_content" class="alert alert-warning">';
-                foreach($error as $content) {
-                    $html_output .= '<span>'.$content.'</span></br>';
+                foreach($error as $info_content) {
+                    $html_output .= '<span>'.$info_content.'</span></br>';
                 }
             $html_output .= '  
             </div>
