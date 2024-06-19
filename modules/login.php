@@ -1,45 +1,80 @@
 <?php
-
-if (!isset($_SESSION)) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-
-
-$funktion        = (isset($_POST['funktion']))  ? ($_POST['funktion'])                                 : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
+$funktion = (isset($_POST['funktion']))  ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
 
 switch ($funktion) {
 
     case 'login':
-        
+
         $user_data = get_user_data(['email' => $_POST['email']]);
+        $user_data = is_array($user_data)  ? (current($user_data)) : ($user_data);
 
-        $result = !empty($user_data) ? ($user_data)       : (false);
-        $result = is_array($result)  ? (current($result)) : ($result);
+        $password_verify = password_verify($_POST['passwort'], $user_data['hashed_passwort']);
 
-        $password_verify = password_verify($_POST['passwort'], $result['hashed_passwort']);
+        if (!$password_verify) {
+            echo json_decode(false);
+            exit;
+        }
 
-        echo json_encode($password_verify);
+        $_SESSION['id'] = $user_data['id'];
+
+        echo json_decode(true);
         exit;
 
     case 'registrieren':
 
-    $result = insert_user_data(['email' => $_POST['email'], 'hashed_passwort' => $passwort_hashed, 'deleted' => 'false']);
+    $user_data = get_user_data(['email' => $_POST['email']]);
 
-    echo json_encode($result);
+    if(is_array($user_data)){
+        $user_data = current($user_data);
+    }
+
+    $error = [];
+
+    if (!empty($user_data)) {
+        $error['email_doppelt'] = 'Account bereits vorhanden. Bitte loggen Sie sich mit dem richtigen Passwort ein.';
+    }
+
+    // if (strlen($_POST['passwort']) < 8) {
+    //     $errors['passwort'][] = "Passwort muss mindestens 8 Zeichen enthalten";
+    // }
+
+    // if (!preg_match("#[0-9]+#", $_POST['passwort'])) {
+    //     $errors['passwort'][] = "Passwort muss mindestens eine Zahl enthalten";
+    // }
+
+    // if (!preg_match("#[a-zA-Z]+#", $_POST['passwort'])) {
+    //     $errors['passwort'][] = "Passwort muss mindestens einen Buchstaben enthalten";
+    // }     
+
+    if (!empty($error)) {
+        echo json_encode($error);
+        exit;
+    }
+
+    $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => password_hash($_POST['passwort'], PASSWORD_BCRYPT), 'deleted' => 'false']);
+
+    if(!empty($result)) {
+        $_SESSION['id'] = $result;  
+        echo json_encode(true);
+        exit;
+    }
+
+    echo json_encode(false);
     exit;
 }
 
 
 
-function insert_user_data($attr=[]){
+function create_user_data($attr=[]){
     include_once($_SERVER['DOCUMENT_ROOT'] .'/modules/datenbank.php');
 
     $passwort_hashed = (isset($attr['hashed_passwort']))  ? (password_hash($attr['hashed_passwort'], PASSWORD_BCRYPT)) : ('');
 
-    if (empty($passwort_hashed)) {
-        return false;
-    }
+    if (empty($passwort_hashed)) return false;
 
     $sql = '
     INSERT INTO
@@ -50,12 +85,12 @@ function insert_user_data($attr=[]){
         `user_data`.`deleted` 	       = \''.mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['deleted']).'\' 
     ';
 
-    // var_dump($sql);
-    // exit;
+    $res    = mysqli_query($GLOBALS[DBLINK], $sql);
+    $res_id = mysqli_insert_id($GLOBALS[DBLINK]);
 
-    $res = mysqli_query($GLOBALS[DBLINK], $sql);
+    if (!$res) return false;
 
-    return $res;
+    return $res_id;
 }
 
 
@@ -64,9 +99,9 @@ function get_user_data($attr=[]) {
 
     $where = '';
 
-    $where .= isset($attr['email'])           ? (' AND `user_data`.`email`           = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email']).'\' ')  : ('');                                                            
-    // $where .= isset($attr['hashed_passwort']) ? (' AND `user_data`.`hashed_passwort` = \''.$attr['hashed_passwort'].'\' ')                                   : ('');
-
+    $where .= isset($attr['id'])          ? (' AND `user_data`.`id`    = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\' ')           : ('');       
+    $where .= isset($attr['not_this_id']) ? (' AND `user_data`.`id`    != \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['not_this_id']).'\' ') : ('');       
+    $where .= isset($attr['email'])       ? (' AND `user_data`.`email` =  \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email']).'\' ')       : ('');                                                            
 
 	$sql = '
     SELECT
@@ -81,7 +116,7 @@ function get_user_data($attr=[]) {
     '.$where.'';
 
     $res = mysqli_query($GLOBALS[DBLINK], $sql);
- 
+
     $data = [];
 
     while ($row = mysqli_fetch_assoc($res)) {

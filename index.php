@@ -1,21 +1,34 @@
 <?php
-if (!isset( $_SESSION )) {
-	session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+include_once($_SERVER['DOCUMENT_ROOT'].'/templates/navigation.php');
+
+$template['name'] 	       = (!empty($_GET['template'])) ? ($_GET['template']) : ('');
+$template['template_file'] = $_SERVER['DOCUMENT_ROOT'].'/templates/'.$template['name'].'.php';
+
+$error_aufruf = [];
+if (!file_exists($template['template_file'])) {
+    $error_aufruf[] = 'Seite nicht gefunden';
 }
 
+if (empty($_SESSION['id'])) {
+    $error_aufruf[] = 'Bitte loggen Sie sich ein.';
+}
 
-$template['name'] 	       	= (!empty($_GET['template'])) ? ($_GET['template']) : ('');
-$template['template_file']  = "{$_SERVER['DOCUMENT_ROOT']}/templates/{$template['name']}.php";
-$template['location']       = "/templates/{$template['name']}.php";
+if(!empty($error_aufruf)) {
+    echo '<pre>'; print_r($error_aufruf); echo '</pre>';
 
-
-if (!file_exists($template['template_file'])) {
-    echo "{$template['name']} -> Das Template konnte nicht gefunden werden";
-    exit;
+    include_once($_SERVER['DOCUMENT_ROOT'].'/templates/login.php');
+    $template['content']  = call_user_func('login');
 } 
 
-include($template['template_file']);
-$template['content'] 	= call_user_func($template['name']);
+if (file_exists($template['template_file'])) {
+
+    include_once($template['template_file']);
+    $template['location'] = '/templates/'.$template['name'].'.php';
+    $template['content']  = call_user_func($template['name']);
+} 
 
 $html_output =
 '<!DOCTYPE html>
@@ -32,11 +45,12 @@ $html_output =
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
 
-    <div id="template-content" class="m-0 pb-0 p-1">			
+    <div id="template-content" class="m-0 pb-0 p-1">	
+       <div>'.print_r($_SESSION, true).'</div>
+        <div>'.call_user_func('navigation').'</div>
         '.$template['content'].'
     </div>
 </body>';
 
 echo $html_output;
-
 ?>

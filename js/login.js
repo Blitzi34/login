@@ -6,24 +6,27 @@ $(document).ready(function() {
 
         let email    = $('#email').val();
         let passwort = ($('#passwort').val());
-        let funktion = $(this).attr('funktion');
+        let funktion = $(this).attr('funktion'); ///login oder registrieren
 
         $.ajax({
-            url: '/modules/login.php',
-            type: 'post',
-            dataType: 'json',
-            data: {'email':    $('#email').val(), 
-                   'passwort': $('#passwort').val(), 
-                   'funktion': $(this).attr('funktion')
-                },
-
+            url:      '/modules/login.php',
+            type:     'post',
+            // dataType: 'json',
+            data: 
+            {
+                'email':    email, 
+                'passwort': passwort, 
+                'funktion': funktion
+            },
             success: function(response) {
-                $('#overlay').fadeOut();
 
-                if (response !== false) {
-                    alert('inserted');
+                if (response == true) {
+                    window.location.href = '?template=profil';
                 }
 
+            },
+            error: function (xhr, thrownError) {
+                alert(xhr.status+'-'+thrownError);
             }
         });
 
