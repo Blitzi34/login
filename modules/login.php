@@ -10,19 +10,29 @@ switch ($funktion) {
     case 'login':
 
         $user_data = get_user_data(['email' => $_POST['email']]);
-        $user_data = is_array($user_data)  ? (current($user_data)) : ($user_data);
+        $error = [];
 
-        $password_verify = password_verify($_POST['passwort'], $user_data['hashed_passwort']);
-
-        if (!$password_verify) {
-            echo json_decode(false);
+        if (empty($user_data)) {
+            $error['email'] = 'Email nicht vorhanden.';
+            echo json_encode($error);
             exit;
         }
 
-        $_SESSION['id'] = $user_data['id'];
+        $user_data       = is_array($user_data)  ? (current($user_data)) : ($user_data);
+        $password_verify = password_verify($_POST['passwort'], $user_data['hashed_passwort']);
 
-        echo json_decode(true);
+        if (!$password_verify) {
+            $error['passwort'] = 'Passwort falsch.';
+            echo json_encode($error);
+            exit;
+        }
+
+        $_SESSION['id']    = $user_data['id'];
+        $_SESSION['email'] = $user_data['email'];  
+
+        echo json_encode(true);
         exit;
+
 
     case 'registrieren':
 
@@ -35,20 +45,14 @@ switch ($funktion) {
     $error = [];
 
     if (!empty($user_data)) {
-        $error['email_doppelt'] = 'Account bereits vorhanden. Bitte loggen Sie sich mit dem richtigen Passwort ein.';
+        $error['email'] = 'Account bereits vorhanden. Bitte loggen Sie sich mit dem richtigen Passwort ein.';
     }
 
-    // if (strlen($_POST['passwort']) < 8) {
-    //     $errors['passwort'][] = "Passwort muss mindestens 8 Zeichen enthalten";
-    // }
+    $check_password_stength = check_password_stength($_POST['passwort']);
 
-    // if (!preg_match("#[0-9]+#", $_POST['passwort'])) {
-    //     $errors['passwort'][] = "Passwort muss mindestens eine Zahl enthalten";
-    // }
-
-    // if (!preg_match("#[a-zA-Z]+#", $_POST['passwort'])) {
-    //     $errors['passwort'][] = "Passwort muss mindestens einen Buchstaben enthalten";
-    // }     
+    if($check_password_stength == false) {
+        $error['passwort'] = 'Das Passwort sollte mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
+    }
 
     if (!empty($error)) {
         echo json_encode($error);
@@ -58,7 +62,8 @@ switch ($funktion) {
     $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => password_hash($_POST['passwort'], PASSWORD_BCRYPT), 'deleted' => 'false']);
 
     if(!empty($result)) {
-        $_SESSION['id'] = $result;  
+        $_SESSION['id']    = $result;  
+        $_SESSION['email'] = $_POST['email'];  
         echo json_encode(true);
         exit;
     }
@@ -80,7 +85,7 @@ function create_user_data($attr=[]){
     INSERT INTO
         `login_projekt`.`user_data`
     SET 
-        `user_data`.`email`            = \''.mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['email']).'\',
+        `user_data`.`email`            = \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['email'])).'\',
         `user_data`.`hashed_passwort`  = \''.$passwort_hashed.'\',
         `user_data`.`deleted` 	       = \''.mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['deleted']).'\' 
     ';
@@ -99,9 +104,9 @@ function get_user_data($attr=[]) {
 
     $where = '';
 
-    $where .= isset($attr['id'])          ? (' AND `user_data`.`id`    = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\' ')           : ('');       
-    $where .= isset($attr['not_this_id']) ? (' AND `user_data`.`id`    != \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['not_this_id']).'\' ') : ('');       
-    $where .= isset($attr['email'])       ? (' AND `user_data`.`email` =  \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email']).'\' ')       : ('');                                                            
+    $where .= isset($attr['id'])          ? (' AND `user_data`.`id`    = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\' ')                 : ('');       
+    $where .= isset($attr['not_this_id']) ? (' AND `user_data`.`id`    != \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['not_this_id']).'\' ')       : ('');       
+    $where .= isset($attr['email'])       ? (' AND `user_data`.`email` =  \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email'])).'\' ') : ('');                                                            
 
 	$sql = '
     SELECT
@@ -124,6 +129,22 @@ function get_user_data($attr=[]) {
     }
 
     return $data;
+}
+
+function check_password_stength($passwort) {
+    $uppercase     = preg_match('#[A-Z]#', $_POST['passwort']);
+    $lowercase     = preg_match('#[a-z]#', $_POST['passwort']);
+    $number        = preg_match('#[0-9]#', $_POST['passwort']);
+    $special_chars = preg_match('#[^\w]#', $_POST['passwort']);
+
+    if (!$uppercase || !$lowercase || !$number || !$special_chars || strlen($_POST['passwort']) < 8) {
+        $result = false;
+    } else {
+        $result = true;
+    }
+
+
+    return $result;
 }
 
 

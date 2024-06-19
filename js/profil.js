@@ -11,7 +11,7 @@ $(document).ready(function() {
         $.ajax({
             url:      '/modules/profil.php',
             type:     'post',
-            // dataType: 'json',
+            dataType: 'json',
             data: 
             {
                 'profil_email':    profil_email, 
@@ -20,7 +20,9 @@ $(document).ready(function() {
             },
             success: function(response) {
 
-                if (response !== false) {
+                show_errors(response);
+
+                if (response == true) {
                     window.location.href = '/?template=profil';
                 }
             },

@@ -15,11 +15,11 @@ switch ($funktion) {
 
         $error = [];
         if (!empty($user_data)) {
-            $error = 'Email bereits vorhanden.';
+            $error['profil_email'] = 'Email bereits vorhanden.';
         }
 
         if (!empty($error)) {
-            echo '<pre>'; print_r($error); echo '</pre>';
+            echo json_encode($error);
             exit;
         }
 
@@ -38,20 +38,20 @@ function update_user_data_by_id($attr=[]){
     $set = []; 
 
     if(!empty($attr['email'])){
-        $set[] = ' `user_data`.`email` = \''. mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email']) .'\' ';
+        $set[] = ' `user_data`.`email` = \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email'])).'\' ';
     }
 
     if(!empty($attr['hashed_passwort'])){
-        $set[] = ' `user_data`.`hashed_passwort` = \''. mysqli_real_escape_string($GLOBALS[DBLINK], $attr['hashed_passwort']) .'\' ';
+        $set[] = ' `user_data`.`hashed_passwort` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['hashed_passwort']).'\' ';
     }
 
     if(!empty($attr['deleted'])){
-        $set[] = ' `user_data`.`deleted` = \''. mysqli_real_escape_string($GLOBALS[DBLINK], $attr['deleted']) .'\' ';
+        $set[] = ' `user_data`.`deleted` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['deleted']).'\' ';
     }
 
 	$where = '';
 
-    $where .= isset($attr['id']) ? ' AND `user_data`.`id`  = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\'' : ('');
+    $where .= isset($attr['id']) ? ' AND `user_data`.`id` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\'' : ('');
 
 	$sql = '
 	UPDATE

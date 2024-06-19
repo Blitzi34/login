@@ -7,20 +7,18 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/templates/navigation.php');
 $template['name'] 	       = (!empty($_GET['template'])) ? ($_GET['template']) : ('');
 $template['template_file'] = $_SERVER['DOCUMENT_ROOT'].'/templates/'.$template['name'].'.php';
 
-$error_aufruf = [];
+$error = [];
 if (!file_exists($template['template_file'])) {
-    $error_aufruf[] = 'Seite nicht gefunden';
+    $error[] = 'Seite nicht gefunden.';
 }
 
 if (empty($_SESSION['id'])) {
-    $error_aufruf[] = 'Bitte loggen Sie sich ein.';
+    $error[] = 'Bitte loggen Sie sich ein.';
 }
 
-if(!empty($error_aufruf)) {
-    echo '<pre>'; print_r($error_aufruf); echo '</pre>';
-
-    include_once($_SERVER['DOCUMENT_ROOT'].'/templates/login.php');
-    $template['content']  = call_user_func('login');
+if(!empty($error)) {
+    include_once($_SERVER['DOCUMENT_ROOT'].'/templates/home.php');
+    $template['content']  = call_user_func('home');
 } 
 
 if (file_exists($template['template_file'])) {
@@ -30,8 +28,8 @@ if (file_exists($template['template_file'])) {
     $template['content']  = call_user_func($template['name']);
 } 
 
-$html_output =
-'<!DOCTYPE html>
+$html_output = '
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -46,11 +44,20 @@ $html_output =
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
 
     <div id="template-content" class="m-0 pb-0 p-1">	
-       <div>'.print_r($_SESSION, true).'</div>
-        <div>'.call_user_func('navigation').'</div>
-        '.$template['content'].'
+        <div id="info_box" class="'.$info_class = (!empty($error)) ? ('') : ('d-none').'">
+            <div id="info_content" class="alert alert-warning">';
+                foreach($error as $content) {
+                    $html_output .= '<span>'.$content.'</span></br>';
+                }
+            $html_output .= '  
+            </div>
+        </div>
+        <div id="navigation" class="sticky-top">'.call_user_func('navigation').'</div>
+        <div id="content">'.$template['content'].'</div>
     </div>
-</body>';
+</body>
+
+<script src="/js/index.js?version='.time().'" type="text/javascript"></script>';
 
 echo $html_output;
 ?>

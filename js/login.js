@@ -1,6 +1,8 @@
 
 $(document).ready(function() {
 
+
+
     $("#submit_login, #submit_registrieren").click(function(event) {
         event.preventDefault();
 
@@ -11,7 +13,7 @@ $(document).ready(function() {
         $.ajax({
             url:      '/modules/login.php',
             type:     'post',
-            // dataType: 'json',
+            dataType: 'json',
             data: 
             {
                 'email':    email, 
@@ -20,19 +22,18 @@ $(document).ready(function() {
             },
             success: function(response) {
 
+                show_errors(response);
+
                 if (response == true) {
                     window.location.href = '?template=profil';
                 }
-
             },
             error: function (xhr, thrownError) {
                 alert(xhr.status+'-'+thrownError);
             }
         });
 
-
     });
-
 
 
 });

@@ -6,8 +6,7 @@ function profil() {
     $get_user_data = [];
 
     if(empty($_SESSION['id'])) {
-        header('Loction: '.$_SERVER['SERVER_NAME'].'/templates/home.php');
-        exit;
+        return false;
     }
 
     $get_user_data = get_user_data(['id' => $_SESSION['id']]);
