@@ -9,7 +9,7 @@ function login() {
     $html_output =
     '<form id="login_form">
         <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
+            <label for="exampleInputEmail1">Email</label>
             <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="E-mail">
             <small id="emailHelp" class="form-text text-muted">We\'ll never share your email with anyone else.</small>
         </div>
