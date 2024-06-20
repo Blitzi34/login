@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
+session_handler();
 
 $funktion = (isset($_POST['funktion']))  ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
 
@@ -21,14 +20,16 @@ switch ($funktion) {
         $user_data       = is_array($user_data)  ? (current($user_data)) : ($user_data);
         $password_verify = password_verify($_POST['passwort'], $user_data['hashed_passwort']);
 
-        if (!$password_verify) {
-            $error['passwort'] = 'Passwort falsch.';
-            echo json_encode($error);
-            exit;
-        }
+        // if (!$password_verify) {
+        //     $error['passwort'] = 'Passwort falsch.';
+        //     echo json_encode($error);
+        //     exit;
+        // }
 
-        $_SESSION['id']    = $user_data['id'];
-        $_SESSION['email'] = $user_data['email'];  
+        $_SESSION['id']       = $user_data['id'];
+        $_SESSION['email']    = $user_data['email']; 
+        $_SESSION['loggedin'] = true; 
+        session_handler();
 
         echo json_encode(true);
         exit;
@@ -48,11 +49,11 @@ switch ($funktion) {
         $error['email'] = 'Account bereits vorhanden. Bitte loggen Sie sich mit dem richtigen Passwort ein.';
     }
 
-    $check_password_stength = check_password_stength($_POST['passwort']);
+    // $check_password_stength = check_password_stength($_POST['passwort']);
 
-    if($check_password_stength == false) {
-        $error['passwort'] = 'Das Passwort sollte mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
-    }
+    // if($check_password_stength == false) {
+    //     $error['passwort'] = 'Das Passwort sollte mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
+    // }
 
     if (!empty($error)) {
         echo json_encode($error);
@@ -62,8 +63,10 @@ switch ($funktion) {
     $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => password_hash($_POST['passwort'], PASSWORD_BCRYPT), 'deleted' => 'false']);
 
     if(!empty($result)) {
-        $_SESSION['id']    = $result;  
-        $_SESSION['email'] = $_POST['email'];  
+        $_SESSION['id']       = $result;  
+        $_SESSION['email']    = $_POST['email'];  
+        $_SESSION['loggedin'] = true;
+        session_handler();
         echo json_encode(true);
         exit;
     }

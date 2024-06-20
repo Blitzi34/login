@@ -1,4 +1,7 @@
 <?php
+include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
+session_handler();
+
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/profil.php');
 
 function profil() {

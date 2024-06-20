@@ -5,10 +5,23 @@ $(document).ready(function() {
     let urlParams   = new URLSearchParams(queryString);
     let template    = urlParams.get('template');
 
-    $('.active').removeClass('active');
-    if(template.length > 0 && $('#'+template)) {
-        $('#'+template).addClass('active');
-    }
+    $.ajax({
+        url:      '/modules/navigation.php',
+        type:     'post',
+        dataType: 'json',
+        data: {'template': template, 'funktion': 'check_template_exists'},
+        success: function(response) {
+
+            if (response == false) {
+                // window.location.href = '?template=home';
+            }
+        },
+        error: function (xhr, thrownError) {
+            alert(xhr.status+'-'+thrownError);
+        }
+    });
+
+
 
 
     $("#logout_button").click(function(event) {
