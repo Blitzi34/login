@@ -2,26 +2,13 @@
 
 function connect_mysqli() {
 
-  // $args = [
-  //   'hostname' => 'localhost',
-  //   'username' => 'admin',
-  //   'password' => 'admin'
-  //   // 'database' => 'login_projekt',
-  //   // 'port'     => '3306'
-  // ];
-
-  // $args = sprintf("'%s'", implode("', '", $args));
-
-  // $conn = mysqli_connect($args);
-
   $hostname = 'db';
   $username = 'login';
   $password = 'login';
   $database = 'login_projekt';
-  // $port     = '3306';
-  echo 'TEST';
+  $port     = '3306';
 
-  $conn = mysqli_connect($hostname, $username, $password, $database);
+  $conn = mysqli_connect($hostname, $username, $password, $database, $port);
 
   if (!$conn) {
     die('Connection failed: ' . mysqli_connect_error());
