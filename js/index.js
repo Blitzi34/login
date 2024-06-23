@@ -14,9 +14,3 @@ function show_errors(response) {
     }
 }
 
-
-$(document).ready(function() {
-
-
-});
-

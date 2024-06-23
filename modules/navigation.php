@@ -2,7 +2,7 @@
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
 session_handler();
 
-$funktion = (isset($_POST['funktion']))  ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
+$funktion = (isset($_POST['funktion'])) ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
 
 switch ($funktion) {
 
@@ -23,8 +23,8 @@ switch ($funktion) {
             echo json_encode(true);
             exit;
         }
-
 }
+
 
 
 function session_handler() {
@@ -32,7 +32,6 @@ function session_handler() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-
   
     if (isset($_SESSION['loggedin'])) { 
  
@@ -54,10 +53,11 @@ function session_handler() {
     } 
   
     return 'session_ok';
-  }
+}
 
 
-  function logout() {
+
+function logout() {
 
     session_unset();
     return true;

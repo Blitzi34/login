@@ -8,8 +8,8 @@ $template['name'] 	       = (!empty($_GET['template'])) ? ($_GET['template']) : 
 $template['template_file'] = $_SERVER['DOCUMENT_ROOT'].'/templates/'.$template['name'].'.php';
 
 $error_redir = '';
+$info_class  = '';
 $error       = [];
-$info_class = '';
 
 if (!file_exists($template['template_file'])) {
     $error_redir = 'home';
@@ -31,10 +31,6 @@ if (file_exists($template['template_file'])) {
     $template['location'] = '/templates/'.$template['name'].'.php';
     $template['content']  = call_user_func($template['name']);
 } 
-
-// echo '<pre>'
-// .print_r($_SESSION, true).
-// '</pre>';
 
 $html_output = '
 <!DOCTYPE html>

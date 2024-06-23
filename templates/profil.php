@@ -1,19 +1,19 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/modules/profil.php');
 session_handler();
 
-include_once($_SERVER['DOCUMENT_ROOT'].'/modules/profil.php');
-
 function profil() {
-
-    $get_user_data = [];
 
     if(empty($_SESSION['id'])) {
         return false;
     }
-
+    $get_user_data = [];
     $get_user_data = get_user_data(['id' => $_SESSION['id']]);
-    $get_user_data = (is_array($get_user_data)) ? (current($get_user_data)) : ($get_user_data);
+
+    if (!empty($get_user_data)) {
+        $get_user_data = (is_array($get_user_data)) ? (current($get_user_data)) : ($get_user_data);
+    }
 
     $html_output ='
     <form id="profil_from">
@@ -38,5 +38,4 @@ function profil() {
 
     return $html_output;
 }
-
 ?>

@@ -1,6 +1,3 @@
-$( document ).ready(function() {
-
-// alert('sample');
-
+$(document).ready(function() {
 
 });

@@ -1,19 +1,19 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
-session_handler();
-
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/sample.php');
 
-    function sample() {
+session_handler();
 
-        $html_output =
-        '<div>
-            Test Template
-        </div>
+function sample() {
 
-        <script src="/js/sample.js?version='.time().'" type="text/javascript"></script>';
-    
-        return $html_output;
-    }
+    $html_output =
+    '<div>
+        Test Template
+    </div>
+
+    <script src="/js/sample.js?version='.time().'" type="text/javascript"></script>';
+
+    return $html_output;
+}
 
 ?>

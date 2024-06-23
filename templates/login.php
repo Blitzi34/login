@@ -1,13 +1,12 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
-session_handler();
-
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/login.php');
+session_handler();
 
 function login() {
 
-    $html_output =
-    '<form id="login_form">
+    $html_output = '
+    <form id="login_form">
         <div class="form-group">
             <label for="exampleInputEmail1">Email</label>
             <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="E-mail">
@@ -25,5 +24,4 @@ function login() {
 
     return $html_output;
 }
-
 ?>

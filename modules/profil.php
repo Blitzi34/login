@@ -1,8 +1,7 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
-session_handler();
-
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/login.php');
+session_handler();
 
 $funktion = (isset($_POST['funktion'])) ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
 
@@ -44,8 +43,7 @@ function update_user_data_by_id($attr=[]){
         $set[] = ' `user_data`.`hashed_passwort` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['hashed_passwort']).'\' ';
     }
 
-	$where = '';
-
+	$where  = '';
     $where .= isset($attr['id']) ? ' AND `user_data`.`id` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\'' : ('');
 
 	$sql = '
@@ -61,5 +59,4 @@ function update_user_data_by_id($attr=[]){
 
     return $res;	
 }
-
 ?>

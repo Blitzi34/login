@@ -1,5 +1,4 @@
 <?php
-
 function connect_mysqli() {
 
   $hostname = 'db';
@@ -11,17 +10,16 @@ function connect_mysqli() {
   $conn = mysqli_connect($hostname, $username, $password, $database, $port);
 
   if (!$conn) {
-    die('Connection failed: ' . mysqli_connect_error());
+    die('Connection failed: '.mysqli_connect_error());
   }
   return $conn;
 }
 
-  if (!defined('DBLINK')) {
-    define('DBLINK', 'connect_mysqli');
-  }
-  
-  if (!isset($GLOBALS[DBLINK]) || is_resource($GLOBALS[DBLINK]) === FALSE) {
-    $GLOBALS[DBLINK] = connect_mysqli();
-  }
+if (!defined('DBLINK')) {
+  define('DBLINK', 'connect_mysqli');
+}
 
+if (!isset($GLOBALS[DBLINK]) || is_resource($GLOBALS[DBLINK]) === FALSE) {
+  $GLOBALS[DBLINK] = connect_mysqli();
+}
 ?>

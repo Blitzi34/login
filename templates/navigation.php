@@ -4,7 +4,7 @@ session_handler();
 
 function navigation() {
 
-    $html_output ='
+    $html_output = '
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-2">
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav">
@@ -25,7 +25,7 @@ function navigation() {
                         <a class="nav-link" href="?template=profil">Profil</a>
                     </li>
                     <li id="php_info" class="nav-item">
-                        <a class="nav-link" href="?template=php_info">PHP Info</a>
+                        <a class="nav-link" href="?template=php_info" target="_blank">PHP Info</a>
                     </li>';
                 }
 
@@ -46,7 +46,7 @@ function navigation() {
 
                 }
 
-                $html_output .= '
+            $html_output .= '
             </ul>
         </div>
     </nav>
@@ -55,5 +55,4 @@ function navigation() {
 
     return $html_output;
 }
-
 ?>

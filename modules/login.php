@@ -2,7 +2,7 @@
 include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
 session_handler();
 
-$funktion = (isset($_POST['funktion']))  ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : '');
+$funktion = (isset($_POST['funktion'])) ? ($_POST['funktion']) : ( isset($_GET['funktion']) ? ($_GET['funktion']) : ('') );
 
 switch ($funktion) {
 
@@ -21,11 +21,11 @@ switch ($funktion) {
         $user_data       = is_array($user_data)  ? (current($user_data)) : ($user_data);
         $password_verify = password_verify($_POST['passwort'], $user_data['hashed_passwort']);
 
-        // if (!$password_verify) {
-        //     $error['passwort'] = 'Passwort falsch.';
-        //     echo json_encode($error);
-        //     exit;
-        // }
+        if (!$password_verify) {
+            $error['passwort'] = 'Passwort falsch.';
+            echo json_encode($error);
+            exit;
+        }
 
         $_SESSION['id']       = $user_data['id'];
         $_SESSION['email']    = $user_data['email']; 
@@ -51,11 +51,11 @@ switch ($funktion) {
         $error['email'] = 'Account bereits vorhanden. Bitte loggen Sie sich mit dem richtigen Passwort ein.';
     }
 
-    // $check_password_stength = check_password_stength($_POST['passwort']);
+    $check_password_stength = check_password_stength($_POST['passwort']);
 
-    // if($check_password_stength == false) {
-    //     $error['passwort'] = 'Das Passwort sollte mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
-    // }
+    if($check_password_stength == false) {
+        $error['passwort'] = 'Das Passwort sollte mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
+    }
 
     if (!empty($error)) {
         echo json_encode($error);
@@ -82,7 +82,7 @@ switch ($funktion) {
 function create_user_data($attr=[]){
     include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
 
-    $passwort_hashed = (isset($attr['hashed_passwort']))  ? (password_hash($attr['hashed_passwort'], PASSWORD_BCRYPT)) : ('');
+    $passwort_hashed = (isset($attr['hashed_passwort'])) ? (password_hash($attr['hashed_passwort'], PASSWORD_BCRYPT)) : ('');
 
     if (empty($passwort_hashed)) return false;
 
@@ -102,11 +102,11 @@ function create_user_data($attr=[]){
 }
 
 
+
 function get_user_data($attr=[]) {
     include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
 
-    $where = '';
-
+    $where  = '';
     $where .= isset($attr['id'])          ? (' AND `user_data`.`id`    = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['id']).'\' ')                 : ('');       
     $where .= isset($attr['not_this_id']) ? (' AND `user_data`.`id`    != \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['not_this_id']).'\' ')       : ('');       
     $where .= isset($attr['email'])       ? (' AND `user_data`.`email` =  \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email'])).'\' ') : ('');                                                            
@@ -133,6 +133,8 @@ function get_user_data($attr=[]) {
     return $data;
 }
 
+
+
 function check_password_stength($passwort) {
     $uppercase     = preg_match('#[A-Z]#', $_POST['passwort']);
     $lowercase     = preg_match('#[a-z]#', $_POST['passwort']);
@@ -145,10 +147,6 @@ function check_password_stength($passwort) {
         $result = true;
     }
 
-
     return $result;
 }
-
-
-
 ?>

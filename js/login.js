@@ -1,7 +1,4 @@
-
 $(document).ready(function() {
-
-
 
     $("#submit_login, #submit_registrieren").click(function(event) {
         event.preventDefault();
@@ -25,7 +22,7 @@ $(document).ready(function() {
                 show_errors(response);
 
                 if (response == true) {
-                    window.location.href = '?template=profil';
+                    window.location.href = '?template=home';
                 }
             },
             error: function (xhr, thrownError) {

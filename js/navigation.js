@@ -13,7 +13,7 @@ $(document).ready(function() {
         success: function(response) {
 
             if (response == false) {
-                // window.location.href = '?template=home';
+                window.location.href = '?template=home';
             }
         },
         error: function (xhr, thrownError) {
