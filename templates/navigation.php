@@ -23,6 +23,9 @@ function navigation() {
                     $html_output .= '
                     <li id="profil" class="nav-item">
                         <a class="nav-link" href="?template=profil">Profil</a>
+                    </li>
+                    <li id="php_info" class="nav-item">
+                        <a class="nav-link" href="?template=php_info">PHP Info</a>
                     </li>';
                 }
 

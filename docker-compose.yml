@@ -1,0 +1,26 @@
+services:
+  db: 
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=login_projekt
+      - MYSQL_USER=login
+      - MYSQL_PASSWORD=login # this should live in a env var
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+    volumes:
+      - "./data:/docker-entrypoint-initdb.d" # this is how we persist a sql db even when container stops
+  www:
+    image: php:apache
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    volumes:
+      - "./:/var/www/html" # sync the current dir on local machine to the dir of container
+    ports:
+      - 80:80
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8001:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306

@@ -7,6 +7,7 @@ $funktion = (isset($_POST['funktion']))  ? ($_POST['funktion']) : ( isset($_GET[
 switch ($funktion) {
 
     case 'login':
+        include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
 
         $user_data = get_user_data(['email' => $_POST['email']]);
         $error = [];
@@ -36,6 +37,7 @@ switch ($funktion) {
 
 
     case 'registrieren':
+    include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
 
     $user_data = get_user_data(['email' => $_POST['email']]);
 
@@ -60,7 +62,7 @@ switch ($funktion) {
         exit;
     }
 
-    $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => password_hash($_POST['passwort'], PASSWORD_BCRYPT), 'deleted' => 'false']);
+    $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => password_hash($_POST['passwort'], PASSWORD_BCRYPT)]);
 
     if(!empty($result)) {
         $_SESSION['id']       = $result;  
@@ -78,7 +80,7 @@ switch ($funktion) {
 
 
 function create_user_data($attr=[]){
-    include_once($_SERVER['DOCUMENT_ROOT'] .'/modules/datenbank.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
 
     $passwort_hashed = (isset($attr['hashed_passwort']))  ? (password_hash($attr['hashed_passwort'], PASSWORD_BCRYPT)) : ('');
 
@@ -89,9 +91,7 @@ function create_user_data($attr=[]){
         `login_projekt`.`user_data`
     SET 
         `user_data`.`email`            = \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['email'])).'\',
-        `user_data`.`hashed_passwort`  = \''.$passwort_hashed.'\',
-        `user_data`.`deleted` 	       = \''.mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['deleted']).'\' 
-    ';
+        `user_data`.`hashed_passwort`  = \''.$passwort_hashed.'\'';
 
     $res    = mysqli_query($GLOBALS[DBLINK], $sql);
     $res_id = mysqli_insert_id($GLOBALS[DBLINK]);
@@ -103,7 +103,7 @@ function create_user_data($attr=[]){
 
 
 function get_user_data($attr=[]) {
-    include_once($_SERVER['DOCUMENT_ROOT'] .'/modules/datenbank.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
 
     $where = '';
 
@@ -115,8 +115,7 @@ function get_user_data($attr=[]) {
     SELECT
         `user_data`.`id`,
 		`user_data`.`email`,
-		`user_data`.`hashed_passwort`,
-		`user_data`.`deleted`
+		`user_data`.`hashed_passwort`
     FROM 
         `login_projekt`.`user_data`
 	WHERE

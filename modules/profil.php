@@ -23,7 +23,7 @@ switch ($funktion) {
         }
 
         $passwort_hashed = (!empty($_POST['profil_passwort'])) ? (password_hash($_POST['profil_passwort'], PASSWORD_BCRYPT)) : ('');
-        $result          = update_user_data_by_id(['id' => $_SESSION['id'], 'email' => $_POST['profil_email'], 'hashed_passwort' => $passwort_hashed, 'deleted' => 'false']);
+        $result          = update_user_data_by_id(['id' => $_SESSION['id'], 'email' => $_POST['profil_email'], 'hashed_passwort' => $passwort_hashed]);
 
         echo json_encode(true);
         exit;
@@ -42,10 +42,6 @@ function update_user_data_by_id($attr=[]){
 
     if(!empty($attr['hashed_passwort'])){
         $set[] = ' `user_data`.`hashed_passwort` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['hashed_passwort']).'\' ';
-    }
-
-    if(!empty($attr['deleted'])){
-        $set[] = ' `user_data`.`deleted` = \''.mysqli_real_escape_string($GLOBALS[DBLINK], $attr['deleted']).'\' ';
     }
 
 	$where = '';
