@@ -62,7 +62,7 @@ switch ($funktion) {
         exit;
     }
 
-    $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => password_hash($_POST['passwort'], PASSWORD_BCRYPT)]);
+    $result = create_user_data(['email' => $_POST['email'], 'hashed_passwort' => $_POST['passwort']]);
 
     if(!empty($result)) {
         $_SESSION['id']       = $result;  
@@ -91,7 +91,8 @@ function create_user_data($attr=[]){
         `login_projekt`.`user_data`
     SET 
         `user_data`.`email`            = \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['email'])).'\',
-        `user_data`.`hashed_passwort`  = \''.$passwort_hashed.'\'';
+        `user_data`.`hashed_passwort`  = \''.$passwort_hashed.'\' 
+    ';
 
     $res    = mysqli_query($GLOBALS[DBLINK], $sql);
     $res_id = mysqli_insert_id($GLOBALS[DBLINK]);
