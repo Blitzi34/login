@@ -5,9 +5,8 @@ session_handler();
 
 function profil() {
 
-    if(empty($_SESSION['id'])) {
-        return false;
-    }
+    if (!isset($_SESSION['id'])) return false;
+
     $get_user_data = [];
     $get_user_data = get_user_data(['id' => $_SESSION['id']]);
 

@@ -7,10 +7,16 @@ $funktion = (isset($_POST['funktion'])) ? ($_POST['funktion']) : ( isset($_GET['
 switch ($funktion) {
 
     case 'login':
-        include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
-
-        $user_data = get_user_data(['email' => $_POST['email']]);
         $error = [];
+
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            $error['email'] = 'Bitte eine gültige Email-Adresse eingeben.';
+            echo json_encode($error);
+            exit;
+        }
+
+        include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
+        $user_data = get_user_data(['email' => $_POST['email']]);
 
         if (empty($user_data)) {
             $error['email'] = 'Email nicht vorhanden.';
@@ -37,16 +43,22 @@ switch ($funktion) {
 
 
     case 'registrieren':
-    include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
+    $error = [];
 
+    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        $error['email'] = 'Bitte eine gültige Email-Adresse eingeben.';
+        echo json_encode($error);
+        exit;
+    }
+
+    include_once($_SERVER['DOCUMENT_ROOT'].'/modules/datenbank.php');
     $user_data = get_user_data(['email' => $_POST['email']]);
 
     if(is_array($user_data)){
         $user_data = current($user_data);
     }
 
-    $error = [];
-
+  
     if (!empty($user_data)) {
         $error['email'] = 'Account bereits vorhanden. Bitte loggen Sie sich mit dem richtigen Passwort ein.';
     }
@@ -90,7 +102,7 @@ function create_user_data($attr=[]){
     INSERT INTO
         `login_projekt`.`user_data`
     SET 
-        `user_data`.`email`            = \''.strtolower(mysqli_real_escape_string($GLOBALS[DBLINK],  $attr['email'])).'\',
+        `user_data`.`email`            = \''.trim(strtolower(mysqli_real_escape_string($GLOBALS[DBLINK], $attr['email']))).'\',
         `user_data`.`hashed_passwort`  = \''.$passwort_hashed.'\' 
     ';
 

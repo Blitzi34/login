@@ -3,6 +3,14 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/modules/navigation.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/templates/navigation.php');
 session_handler();
 
+$_SESSION['is_admin'] = true; //Auf true setzten, um die php_info aufrufen zu können.
+define('DEBUG', true);      // Auf true setzen, um Fehler-Outputs zu erhalten
+
+error_reporting(E_ALL);
+ini_set('log_errors', TRUE);
+ini_set('display_errors', DEBUG ? 'On' : 'Off');
+
+
 /// Das aufgerufene Template wird über die index.php mit dem $_GET['template] Parameter aufgerufen
 $template['name'] 	       = (!empty($_GET['template'])) ? ($_GET['template']) : ('');
 $template['template_file'] = $_SERVER['DOCUMENT_ROOT'].'/templates/'.$template['name'].'.php';

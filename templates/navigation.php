@@ -12,20 +12,24 @@ function navigation() {
                     <a class="nav-link" href="?template=home">Home</a>
                 </li>';
 
-                if (!isset($_SESSION['id'])){
+                if (!isset($_SESSION['id'])) {
                     $html_output .= ' 
                     <li id="login" class="nav-item">
                         <a class="nav-link" href="?template=login">Login</a></span>
                     </li>';
                 }
 
-                if (isset($_SESSION['id'])){
+                if (isset($_SESSION['id'])) {
                     $html_output .= '
                     <li id="profil" class="nav-item">
                         <a class="nav-link" href="?template=profil">Profil</a>
-                    </li>
+                    </li>';
+                }
+
+                if (isset($_SESSION['id']) && !empty($_SESSION['is_admin'])) {
+                    $html_output .= '
                     <li id="php_info" class="nav-item">
-                        <a class="nav-link" href="?template=php_info" target="_blank">PHP Info</a>
+                    <a class="nav-link" href="?template=php_info" target="_blank">PHP Info</a>
                     </li>';
                 }
 
@@ -34,7 +38,7 @@ function navigation() {
 
             <ul class="navbar-nav ml-auto">';
 
-                if(isset($_SESSION['email'])){
+                if (isset($_SESSION['email'])) {
                     $html_output .= ' 
                     <li id="logout" class="nav-item">
                         <a class="nav-link" id="logout_button" href="#">Logout</a></span>
