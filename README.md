@@ -15,7 +15,7 @@ Wechsel mit dem Terminal in das Verzeichnis:
 cd login
 
 Prüfe im Termin mit "ls", ob doe docker-compse.yml vorhanden ist und für diese aus:
-docker compose up -d
+docker compose up --build
 
 Besuche in deinem Browser die Seite "http://localhost" (Port 80). 
 Für phpMyAdmin besuche http://localhost:8001/ (Port 8001).
